@@ -1,27 +1,27 @@
 package com.example.gameandroidassignment1;
 
 public class Tank {
-    private MainActivity.Location location;
+    private GameActivity.Location location;
 
     public Tank() {
-        this.location = MainActivity.Location.MIDDLE;
+        this.location = GameActivity.Location.MIDDLE;
     }
 
-    public MainActivity.Location getLocation() {
+    public GameActivity.Location getLocation() {
         return location;
     }
 
     public void goLeft() {
-        if(location == MainActivity.Location.MIDDLE)
-            this.location = MainActivity.Location.LEFT;
-        else if(location == MainActivity.Location.RIGHT)
-            this.location = MainActivity.Location.MIDDLE;
+        if(location == GameActivity.Location.MIDDLE)
+            this.location = GameActivity.Location.LEFT;
+        else if(location == GameActivity.Location.RIGHT)
+            this.location = GameActivity.Location.MIDDLE;
     }
 
     public void goRight() {
-        if(location == MainActivity.Location.MIDDLE)
-            this.location = MainActivity.Location.RIGHT;
-        else if(location == MainActivity.Location.LEFT)
-            this.location = MainActivity.Location.MIDDLE;
+        if(location == GameActivity.Location.MIDDLE)
+            this.location = GameActivity.Location.RIGHT;
+        else if(location == GameActivity.Location.LEFT)
+            this.location = GameActivity.Location.MIDDLE;
     }
 }

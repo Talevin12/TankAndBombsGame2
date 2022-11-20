@@ -1,13 +1,16 @@
 package com.example.gameandroidassignment1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,17 +23,15 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
+    public static final String KEY_DIFFICULTY = "KEY_DIFFICULTY";
+
     public enum Location {LEFT, MIDDLE, RIGHT}
-    public final int COLUMNS = 3;
-    public final int ROWS = 5;
-    public final int PACE = 2;
 
     private TextView game_LBL_score;
     private ShapeableImageView[] hearts;
     private ShapeableImageView[][] bombImgs;
     private Map<Location, ShapeableImageView> tanks;
-    private Map<Location, ShapeableImageView> explosions;
     private MaterialButton game_BTN_left;
     private MaterialButton game_BTN_right;
 
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_game);
 
         String backgroundImg ="https://www.fonewalls.com/wp-content/uploads/Sand-Surface-Desert-Wallpaper-1080x1920.jpg";
         Glide.with(this)
@@ -54,18 +55,18 @@ public class MainActivity extends AppCompatActivity {
         hearts = new ShapeableImageView[3];
         findHearts();
 
-        bombImgs = new ShapeableImageView[ROWS][COLUMNS];
+        Intent previousIntent = getIntent();
+        int pace = previousIntent.getExtras().getInt(KEY_DIFFICULTY);
+        gameManager = new GameManager(hearts.length, pace);
+
+        bombImgs = new ShapeableImageView[gameManager.ROWS][gameManager.COLUMNS];
         findBombs();
 
         tanks = new HashMap<>();
         findTanks();
 
-        explosions = new HashMap<>();
-        findExplosions();
-
         findButtons();
 
-        gameManager = new GameManager(hearts.length);
         initViews();
 
         startTimer();
@@ -105,12 +106,6 @@ public class MainActivity extends AppCompatActivity {
         tanks.put(Location.RIGHT, findViewById(R.id.game_IMG_tank2));
     }
 
-    private void findExplosions() {
-        explosions.put(Location.LEFT, findViewById(R.id.game_IMG_explosion0));
-        explosions.put(Location.MIDDLE, findViewById(R.id.game_IMG_explosion1));
-        explosions.put(Location.RIGHT, findViewById(R.id.game_IMG_explosion2));
-    }
-
     private void findButtons() {
         this.game_BTN_left = findViewById(R.id.game_BTN_left);
         this.game_BTN_right = findViewById(R.id.game_BTN_right);
@@ -131,34 +126,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        int[] bombLocation;
-        for(int i = 0; i < 1; i++) {
-            bombLocation = gameManager.getBombLocation(i);
-            if(bombLocation[0] != -1)
-                bombImgs[bombLocation[0]][bombLocation[1]].setVisibility(View.INVISIBLE);
+        Bomb bomb;
+        for(int i = 0; i < gameManager.getAmountActiveBombs(); i++) {
+            bomb = gameManager.getBombLocation(i);
+            bombImgs[bomb.getRow()][bomb.getColumn()].setVisibility(View.INVISIBLE);
         }
 
         gameManager.bombsFall();
-
         if(gameManager.checkBombsExploding()) {
-            tanks.get(gameManager.getTankLocation()).setVisibility(View.INVISIBLE);
-            explosions.get(gameManager.getTankLocation()).setVisibility(View.VISIBLE);
-            stopTimer();
-            disableButtons();
             vibrate();
+            Toast.makeText(getApplicationContext(),"OUCH! ",Toast.LENGTH_SHORT).show();
+        }
+
+        if(gameManager.isGameOver()) {
+            gameManager.resetGame();
         }
         else {
-            for (int i = 0; i < 1; i++) {
-                bombLocation = gameManager.getBombLocation(i);
-                if (bombLocation[0] != -1)
-                    bombImgs[bombLocation[0]][bombLocation[1]].setVisibility(View.VISIBLE);
+            for (int i = 0; i < gameManager.getAmountActiveBombs(); i++) {
+                bomb = gameManager.getBombLocation(i);
+                bombImgs[bomb.getRow()][bomb.getColumn()].setVisibility(View.VISIBLE);
             }
         }
 
         game_LBL_score.setText("" + gameManager.getScore());
 
-        for (int i = 0; i < gameManager.getWrong(); i++) {
-            hearts[i].setVisibility(View.INVISIBLE);
+        for (int i = 0; i < gameManager.getLife(); i++) {
+            if(i < gameManager.getWrong())
+                hearts[i].setVisibility(View.INVISIBLE);
+            else
+                hearts[i].setVisibility(View.VISIBLE);
         }
     }
 
@@ -166,21 +162,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void startTimer() {
         timer = new Timer();
+
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(() -> updateUI());
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        updateUI();
+                    }
+                });
             }
         }, DELAY, DELAY);
-    }
-
-    private void stopTimer() {
-        timer.cancel();
-    }
-
-    private void disableButtons() {
-        game_BTN_left.setClickable(false);
-        game_BTN_right.setClickable(false);
     }
 
     private void vibrate() {

@@ -6,15 +6,17 @@ public class Bomb {
     private int column;
     private int row;
     private Random rand;
+//    private boolean active;
 
     public Bomb() {
         rand = new Random();
         reset();
+//        active = false;
     }
 
     public void reset() {
         this.column = rand.nextInt(3);
-        this.row = 0;
+        this.row = -1;
     }
 
     public void fall() {
@@ -28,5 +30,9 @@ public class Bomb {
     public int getRow() {
         return this.row;
     }
+
+//    public boolean getActive() { return this.active;}
+//
+//    public void changeActive() { this.active ^= true;}
 
 }
