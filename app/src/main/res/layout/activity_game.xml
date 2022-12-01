@@ -15,14 +15,16 @@
         android:background="#09B626"
         />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/game_LBL_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginStart="16dp"
         android:text="0"
-        android:textSize="36dp"
+        android:textSize="40dp"
+        android:textColor="#3DE844"
+        android:textStyle="bold"
         />
 
     <androidx.appcompat.widget.LinearLayoutCompat

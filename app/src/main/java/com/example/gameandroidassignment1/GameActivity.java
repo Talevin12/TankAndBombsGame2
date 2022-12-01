@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class GameActivity extends AppCompatActivity {
 
     public enum Location {LEFT, MIDDLE, RIGHT}
 
-    private TextView game_LBL_score;
+    private MaterialTextView game_LBL_score;
     private ShapeableImageView[] hearts;
     private ShapeableImageView[][] bombImgs;
     private Map<Location, ShapeableImageView> tanks;
@@ -37,7 +38,7 @@ public class GameActivity extends AppCompatActivity {
 
     private GameManager gameManager;
 
-    final int DELAY = 500;
+    int DELAY = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +157,9 @@ public class GameActivity extends AppCompatActivity {
             else
                 hearts[i].setVisibility(View.VISIBLE);
         }
+
+        if(gameManager.getScore()%5 == 0 && gameManager.getScore() != 0 && DELAY >= 100)
+            DELAY -= 50;
     }
 
     private Timer timer = new Timer();
