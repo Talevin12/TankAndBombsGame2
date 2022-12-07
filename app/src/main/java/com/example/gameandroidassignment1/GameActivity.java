@@ -225,7 +225,11 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if(gameManager.isGameOver()) {
-            gameManager.resetGame();
+            Intent intent = new Intent(this, LeaderboardActivity.class);
+            intent.putExtra(LeaderboardActivity.KEY_SCORE, gameManager.getScore());
+            startActivity(intent);
+            stopTimer();
+            finish();
         }
         else {
             for (int i = 0; i < gameManager.getAmountActiveDrops(); i++) {
@@ -258,13 +262,13 @@ public class GameActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        updateUI();
-                    }
-                });
+                runOnUiThread(() -> updateUI());
             }
         }, DELAY, DELAY);
+    }
+
+    private void stopTimer(){
+        timer.cancel();
     }
 
     private void vibrate() {

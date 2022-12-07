@@ -1,9 +1,7 @@
 package com.example.gameandroidassignment1;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,31 +39,24 @@ public class StartMenuActivity  extends AppCompatActivity {
     }
 
     private void initButtons() {
-        startMenu_BTN_easy.setOnClickListener(v -> {
-            openScorePage(3);
-        });
+        startMenu_BTN_easy.setOnClickListener(v -> openGamePage(3));
 
-        startMenu_BTN_hard.setOnClickListener(v -> {
-            openScorePage(2);
-        });
+        startMenu_BTN_hard.setOnClickListener(v -> openGamePage(2));
 
-        startMenu_BTN_sensor.setOnClickListener(v -> {
-            openScorePage(-1);
-        });
+        startMenu_BTN_sensor.setOnClickListener(v -> openGamePage(-1));
 
-        startMenu_BTN_leaderboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO
-                // Show Leadboard page
-            }
-        });
+        startMenu_BTN_leaderboard.setOnClickListener(view -> openLeaderboardPage());
     }
 
-    private void openScorePage(int difficulty) {
+    private void openGamePage(int difficulty) {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(GameActivity.KEY_DIFFICULTY, difficulty);
         startActivity(intent);
-        finish();
+    }
+
+    private void openLeaderboardPage() {
+        Intent intent = new Intent(this, LeaderboardActivity.class);
+        intent.putExtra(LeaderboardActivity.KEY_SCORE, -1);
+        startActivity(intent);
     }
 }
