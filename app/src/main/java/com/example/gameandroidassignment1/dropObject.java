@@ -2,20 +2,21 @@ package com.example.gameandroidassignment1;
 
 import java.util.Random;
 
-public class Bomb {
+public class dropObject {
     private int column;
     private int row;
     private Random rand;
-//    private boolean active;
+    private type type;
 
-    public Bomb() {
+
+    public dropObject(type type) {
         rand = new Random();
         reset();
-//        active = false;
+        this.type = type;
     }
 
     public void reset() {
-        this.column = rand.nextInt(3);
+        this.column = rand.nextInt(5);
         this.row = -1;
     }
 
@@ -31,8 +32,7 @@ public class Bomb {
         return this.row;
     }
 
-//    public boolean getActive() { return this.active;}
-//
-//    public void changeActive() { this.active ^= true;}
-
+    public type getType() {
+        return type;
+    }
 }

@@ -12,16 +12,24 @@ public class Tank {
     }
 
     public void goLeft() {
-        if(location == GameActivity.Location.MIDDLE)
-            this.location = GameActivity.Location.LEFT;
-        else if(location == GameActivity.Location.RIGHT)
-            this.location = GameActivity.Location.MIDDLE;
+        if(location == GameActivity.Location.RIGHT)
+            location = GameActivity.Location.RIGHT_MIDDLE;
+        else if(location == GameActivity.Location.RIGHT_MIDDLE)
+            location = GameActivity.Location.MIDDLE;
+        else if(location == GameActivity.Location.MIDDLE)
+            location = GameActivity.Location.LEFT_MIDDLE;
+        else if(location == GameActivity.Location.LEFT_MIDDLE)
+            location = GameActivity.Location.LEFT;
     }
 
     public void goRight() {
-        if(location == GameActivity.Location.MIDDLE)
-            this.location = GameActivity.Location.RIGHT;
-        else if(location == GameActivity.Location.LEFT)
-            this.location = GameActivity.Location.MIDDLE;
+        if(location == GameActivity.Location.LEFT)
+            location = GameActivity.Location.LEFT_MIDDLE;
+        else if(location == GameActivity.Location.LEFT_MIDDLE)
+            location = GameActivity.Location.MIDDLE;
+        else if(location == GameActivity.Location.MIDDLE)
+            location = GameActivity.Location.RIGHT_MIDDLE;
+        else if(location == GameActivity.Location.RIGHT_MIDDLE)
+            location = GameActivity.Location.RIGHT;
     }
 }

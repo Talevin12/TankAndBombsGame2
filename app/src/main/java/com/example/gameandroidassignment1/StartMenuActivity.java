@@ -14,8 +14,9 @@ import com.google.android.material.button.MaterialButton;
 public class StartMenuActivity  extends AppCompatActivity {
 
     private MaterialButton startMenu_BTN_easy;
-    private MaterialButton startMenu_BTN_normal;
     private MaterialButton startMenu_BTN_hard;
+    private MaterialButton startMenu_BTN_sensor;
+    private MaterialButton startMenu_BTN_leaderboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,21 +35,30 @@ public class StartMenuActivity  extends AppCompatActivity {
 
     private void findButtons() {
         startMenu_BTN_easy = findViewById(R.id.startMenu_BTN_easy);
-        startMenu_BTN_normal = findViewById(R.id.startMenu_BTN_normal);
         startMenu_BTN_hard = findViewById(R.id.startMenu_BTN_hard);
+        startMenu_BTN_sensor = findViewById(R.id.startMenu_BTN_sensor);
+        startMenu_BTN_leaderboard = findViewById(R.id.startMenu_BTN_leaderboard);
     }
 
     private void initButtons() {
         startMenu_BTN_easy.setOnClickListener(v -> {
-            openScorePage(4);
-        });
-
-        startMenu_BTN_normal.setOnClickListener(v -> {
             openScorePage(3);
         });
 
         startMenu_BTN_hard.setOnClickListener(v -> {
             openScorePage(2);
+        });
+
+        startMenu_BTN_sensor.setOnClickListener(v -> {
+            openScorePage(-1);
+        });
+
+        startMenu_BTN_leaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO
+                // Show Leadboard page
+            }
         });
     }
 

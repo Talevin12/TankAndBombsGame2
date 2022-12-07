@@ -2,15 +2,17 @@ package com.example.gameandroidassignment1;
 
 import java.util.ArrayList;
 
+enum type {BOMB, COIN};
+
 public class GameManager {
-    public final int COLUMNS = 3;
-    public final int ROWS = 5;
+    public final int COLUMNS = 5;
+    public final int ROWS = 8;
     private int pace;
 
     private int paceStatus;
 
-    private ArrayList<Bomb> activeBombs;
-    private ArrayList<Bomb> inactiveBombs;
+    private ArrayList<dropObject> activeDrops;
+    private ArrayList<dropObject> inactiveDrops;
 
     private Tank tank;
 
@@ -19,14 +21,16 @@ public class GameManager {
     private int life;
     private boolean gameOverflag;
 
+    private int coins = 0;
+
     public GameManager(int life, int pace) {
         this.pace = pace;
         this.paceStatus = pace;
 
-        activeBombs = new ArrayList<>();
-        inactiveBombs = new ArrayList<>();
+        activeDrops = new ArrayList<>();
+        inactiveDrops = new ArrayList<>();
         for(int i = 0; i < (ROWS+1)/pace + ((ROWS+1)%pace == 0? 0: 1); i++)
-            inactiveBombs.add(new Bomb());
+            inactiveDrops.add(new dropObject(i == 2? type.COIN: type.BOMB));
 
         tank = new Tank();
 
@@ -46,38 +50,48 @@ public class GameManager {
         return tank.getLocation();
     }
 
-    public Bomb getBombLocation(int bomb) {
-        return activeBombs.get(bomb);//new int[]{activeBombs.get(bomb).getRow(), activeBombs.get(bomb).getColumn()};
+    public dropObject getDropLocation(int drop) {
+        return activeDrops.get(drop);//new int[]{activeBombs.get(bomb).getRow(), activeBombs.get(bomb).getColumn()};
     }
 
-    public Bomb getFrontBomb() {
-        return activeBombs.get(0);
+    public dropObject getFrontDrop() {
+        return activeDrops.get(0);
     }
 
-    public void bombsFall() {
+    public void dropsFall() {
         if(paceStatus == pace) {
-            activeBombs.add(inactiveBombs.remove(0));
+            activeDrops.add(inactiveDrops.remove(0));
             paceStatus = 1;
         }
         else
             paceStatus++;
 
-        for(Bomb bomb : activeBombs)
-            bomb.fall();
+        for(dropObject drop : activeDrops)
+            drop.fall();
     }
 
-    public boolean checkBombsExploding() {
+    public boolean checkDropMeetTankRow() {
         boolean check = false;
-        if (getFrontBomb().getRow() == ROWS) {
-            if (GameActivity.Location.values()[getFrontBomb().getColumn()] == tank.getLocation()) {
-                wrong++;
-                check = true;
-            } else if(!gameOverflag)
-                score++;
+        if (getFrontDrop().getRow() == ROWS) {
+            if(getFrontDrop().getType() == type.BOMB) {
+                if (GameActivity.Location.values()[getFrontDrop().getColumn()] == tank.getLocation()) {
+                    wrong++;
+                    check = true;
+                } else if (!gameOverflag)
+                    score++;
 
-            getFrontBomb().reset();
-            inactiveBombs.add(getFrontBomb());
-            activeBombs.remove(getFrontBomb());
+                getFrontDrop().reset();
+                inactiveDrops.add(getFrontDrop());
+                activeDrops.remove(getFrontDrop());
+            }
+            else {
+                if (GameActivity.Location.values()[getFrontDrop().getColumn()] == tank.getLocation())
+                    score+=2;
+
+                getFrontDrop().reset();
+                inactiveDrops.add(getFrontDrop());
+                activeDrops.remove(getFrontDrop());
+            }
         }
 
         return check;
@@ -92,8 +106,8 @@ public class GameManager {
         return false;
     }
 
-    public int getAmountActiveBombs() {
-        return this.activeBombs.size();
+    public int getAmountActiveDrops() {
+        return this.activeDrops.size();
     }
 
     public int getScore() {
