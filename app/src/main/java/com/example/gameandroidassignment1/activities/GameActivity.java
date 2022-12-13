@@ -1,7 +1,10 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -13,6 +16,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.gameandroidassignment1.R;
+import com.example.gameandroidassignment1.assets.StepDetector;
+import com.example.gameandroidassignment1.logic.GameManager;
+import com.example.gameandroidassignment1.logic.type;
+import com.example.gameandroidassignment1.logic.dropObject;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
@@ -28,7 +36,7 @@ public class GameActivity extends AppCompatActivity {
     public enum Location {LEFT, LEFT_MIDDLE, MIDDLE, RIGHT_MIDDLE, RIGHT}
 
     private MaterialTextView game_LBL_score;
-    private ShapeableImageView[] hearts;
+    private ShapeableImageView[] hearts = new ShapeableImageView[3];
     private ShapeableImageView[][] bombImgs;
     private ShapeableImageView[][] coinImgs;
     private Map<Location, ShapeableImageView> tanks;
@@ -36,8 +44,14 @@ public class GameActivity extends AppCompatActivity {
     private MaterialButton game_BTN_right;
 
     private GameManager gameManager;
+    private StepDetector stepDetector;
+
+//    BackgroundSound mBackgroundSound;
+    ExplosionSound mExplosionSound;
+    CoinSound mCoinSound;
 
     int DELAY = 500;
+    boolean isSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +66,20 @@ public class GameActivity extends AppCompatActivity {
 
         game_LBL_score = findViewById(R.id.game_LBL_score);
 
-        hearts = new ShapeableImageView[3];
         findHearts();
 
         Intent previousIntent = getIntent();
         int pace = previousIntent.getExtras().getInt(KEY_DIFFICULTY);
-        gameManager = new GameManager(hearts.length, pace);
+
+        if(pace == -1) {
+            stepDetector = new StepDetector(this, callBack_movementSteps, callBack_speedSteps);
+
+            gameManager = new GameManager(hearts.length, 3);
+
+            isSensor = true;
+        }
+        else
+            gameManager = new GameManager(hearts.length, pace);
 
         bombImgs = new ShapeableImageView[gameManager.ROWS][gameManager.COLUMNS];
         findBombs();
@@ -72,7 +94,34 @@ public class GameActivity extends AppCompatActivity {
 
         initViews();
 
+//        startTimer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        mBackgroundSound = new BackgroundSound();
+//        mBackgroundSound.execute();
+//        stepDetector.start();
+
+        if(isSensor) {
+            game_BTN_right.setVisibility(View.INVISIBLE);
+            game_BTN_left.setVisibility(View.INVISIBLE);
+            stepDetector.start();
+        }
         startTimer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (isSensor)
+            stepDetector.stop();
+
+        stopTimer();
+//        finish();
     }
 
     private void findHearts() {
@@ -195,17 +244,55 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        game_BTN_left.setOnClickListener(v -> {
-            tanks.get(gameManager.getTankLocation()).setVisibility(View.INVISIBLE);
-            gameManager.tankGoLeft();
-            tanks.get(gameManager.getTankLocation()).setVisibility(View.VISIBLE);
-        });
+        game_BTN_left.setOnClickListener(v -> tankGoLeft());
 
-        game_BTN_right.setOnClickListener(v -> {
-            tanks.get(gameManager.getTankLocation()).setVisibility(View.INVISIBLE);
-            gameManager.tankGoRight();
-            tanks.get(gameManager.getTankLocation()).setVisibility(View.VISIBLE);
-        });
+        game_BTN_right.setOnClickListener(v -> tankGoRight());
+    }
+
+    private StepDetector.CallBack_movementStep callBack_movementSteps = new StepDetector.CallBack_movementStep() {
+        @Override
+        public void oneStepRight() {
+            tankGoRight();
+        }
+
+        @Override
+        public void oneStepLeft() {
+            tankGoLeft();
+        }
+    };
+
+    private StepDetector.CallBack_speedStep callBack_speedSteps = new StepDetector.CallBack_speedStep() {
+
+        @Override
+        public void increaseSpeed() {
+            if(DELAY > 150) {
+                DELAY -= 50;
+                stopTimer();
+                startTimer();
+            }
+        }
+
+        @Override
+        public void decreaseSpeed() {
+            if(DELAY < 1000) {
+                DELAY += 50;
+                stopTimer();
+                startTimer();
+            }
+        }
+    };
+
+
+    private void tankGoLeft() {
+        tanks.get(gameManager.getTankLocation()).setVisibility(View.INVISIBLE);
+        gameManager.tankGoLeft();
+        tanks.get(gameManager.getTankLocation()).setVisibility(View.VISIBLE);
+    }
+
+    private void tankGoRight() {
+        tanks.get(gameManager.getTankLocation()).setVisibility(View.INVISIBLE);
+        gameManager.tankGoRight();
+        tanks.get(gameManager.getTankLocation()).setVisibility(View.VISIBLE);
     }
 
     private void updateUI() {
@@ -219,9 +306,18 @@ public class GameActivity extends AppCompatActivity {
         }
 
         gameManager.dropsFall();
-        if(gameManager.checkDropMeetTankRow()) {
+        int check = gameManager.checkDropMeetTankRow();
+        if(check == 1) {
             vibrate();
-            Toast.makeText(getApplicationContext(),"OUCH! ",Toast.LENGTH_SHORT).show();
+
+            mExplosionSound = new ExplosionSound();
+            mExplosionSound.execute();
+
+            Toast.makeText(getApplicationContext(), "OUCH! ", Toast.LENGTH_SHORT).show();
+        }
+        else if(check == 2){
+            mCoinSound = new CoinSound();
+            mCoinSound.execute();
         }
 
         if(gameManager.isGameOver()) {
@@ -250,8 +346,14 @@ public class GameActivity extends AppCompatActivity {
                 hearts[i].setVisibility(View.VISIBLE);
         }
 
-        if(gameManager.getScore()%5 == 0 && gameManager.getScore() != 0 && DELAY >= 100)
+        if(gameManager.getScore()%10 == 0
+                && gameManager.getScore() != 0
+                && DELAY >= 200
+                && !isSensor) {
             DELAY -= 50;
+            stopTimer();
+            startTimer();
+        }
     }
 
     private Timer timer = new Timer();
@@ -271,6 +373,7 @@ public class GameActivity extends AppCompatActivity {
         timer.cancel();
     }
 
+    @SuppressLint("MissingPermission")
     private void vibrate() {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
@@ -279,6 +382,44 @@ public class GameActivity extends AppCompatActivity {
         } else {
             //deprecated in API 26
             v.vibrate(500);
+        }
+    }
+
+//    public class BackgroundSound extends AsyncTask<Void, Void, Void> {
+//        MediaPlayer backgroundPlayer = MediaPlayer.create(GameActivity.this, R.raw.background);
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//
+//            backgroundPlayer.setLooping(true); // Set looping
+//            backgroundPlayer.setVolume(1.0f, 1.0f);
+//            backgroundPlayer.start();
+//
+//            return null;
+//        }
+//    }
+
+    public class ExplosionSound extends AsyncTask<Void, Void, Void> {
+        MediaPlayer player = MediaPlayer.create(GameActivity.this, R.raw.explosion);
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            player.setVolume(1.0f, 1.0f);
+            player.start();
+
+            return null;
+        }
+    }
+
+    public class CoinSound extends AsyncTask<Void, Void, Void> {
+        MediaPlayer player = MediaPlayer.create(GameActivity.this, R.raw.coin);
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            player.setVolume(1.0f, 1.0f);
+            player.start();
+
+            return null;
         }
     }
 }

@@ -1,8 +1,10 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.logic;
+
+import com.example.gameandroidassignment1.activities.GameActivity;
 
 import java.util.ArrayList;
 
-enum type {BOMB, COIN};
+;
 
 public class GameManager {
     public final int COLUMNS = 5;
@@ -19,7 +21,6 @@ public class GameManager {
     private int score = 0;
     private int wrong = 0;
     private int life;
-    private boolean gameOverflag;
 
     private int coins = 0;
 
@@ -35,7 +36,6 @@ public class GameManager {
         tank = new Tank();
 
         this.life = life;
-        this.gameOverflag = false;
     }
 
     public void tankGoRight() {
@@ -70,41 +70,31 @@ public class GameManager {
             drop.fall();
     }
 
-    public boolean checkDropMeetTankRow() {
-        boolean check = false;
+    public int checkDropMeetTankRow() {
+        int check = 0;
         if (getFrontDrop().getRow() == ROWS) {
             if(getFrontDrop().getType() == type.BOMB) {
                 if (GameActivity.Location.values()[getFrontDrop().getColumn()] == tank.getLocation()) {
                     wrong++;
-                    check = true;
-                } else if (!gameOverflag)
+                    check = 1;
+                } else
                     score++;
-
-                getFrontDrop().reset();
-                inactiveDrops.add(getFrontDrop());
-                activeDrops.remove(getFrontDrop());
             }
             else {
-                if (GameActivity.Location.values()[getFrontDrop().getColumn()] == tank.getLocation())
-                    score+=2;
-
-                getFrontDrop().reset();
-                inactiveDrops.add(getFrontDrop());
-                activeDrops.remove(getFrontDrop());
+                if (GameActivity.Location.values()[getFrontDrop().getColumn()] == tank.getLocation()) {
+                    score += 2;
+                    check = 2;
+                }
             }
+            getFrontDrop().reset();
+            inactiveDrops.add(getFrontDrop());
+            activeDrops.remove(getFrontDrop());
         }
 
         return check;
     }
 
-    public boolean isGameOver() {
-        if(wrong == life) {
-            gameOverflag = true;
-            return true;
-        }
-
-        return false;
-    }
+    public boolean isGameOver() { return wrong == life; }
 
     public int getAmountActiveDrops() {
         return this.activeDrops.size();
@@ -116,10 +106,6 @@ public class GameManager {
 
     public int getWrong() {
         return wrong;
-    }
-
-    public void resetGame() {
-        this.wrong = 0;
     }
 
     public int getLife() {

@@ -1,4 +1,4 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +7,16 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.gameandroidassignment1.R;
+import com.example.gameandroidassignment1.activities.GameActivity;
+import com.example.gameandroidassignment1.activities.LeaderboardActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class StartMenuActivity  extends AppCompatActivity {
+
+    public final int EASY = 3;
+    public final int HARD = 2;
+    public final int SENSOR = -1;
 
     private MaterialButton startMenu_BTN_easy;
     private MaterialButton startMenu_BTN_hard;
@@ -39,11 +46,11 @@ public class StartMenuActivity  extends AppCompatActivity {
     }
 
     private void initButtons() {
-        startMenu_BTN_easy.setOnClickListener(v -> openGamePage(3));
+        startMenu_BTN_easy.setOnClickListener(v -> openGamePage(EASY));
 
-        startMenu_BTN_hard.setOnClickListener(v -> openGamePage(2));
+        startMenu_BTN_hard.setOnClickListener(v -> openGamePage(HARD));
 
-        startMenu_BTN_sensor.setOnClickListener(v -> openGamePage(-1));
+        startMenu_BTN_sensor.setOnClickListener(v -> openGamePage(SENSOR));
 
         startMenu_BTN_leaderboard.setOnClickListener(view -> openLeaderboardPage());
     }

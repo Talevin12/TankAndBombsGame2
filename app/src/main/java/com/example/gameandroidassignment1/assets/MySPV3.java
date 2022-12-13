@@ -1,4 +1,4 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.assets;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,14 +16,13 @@ public class MySPV3 {
     }
 
     public static void init(Context context) {
-        if (mySPV3 == null) {
+        if (mySPV3 == null)
             mySPV3 = new MySPV3(context);
-        }
     }
 
     private MySPV3(Context context) {
-
         preferences = context.getSharedPreferences(DB_FILE, Context.MODE_PRIVATE);
+//        preferences.edit().clear().commit();
     }
 
     public void putString(String key, String value) {
@@ -35,5 +34,4 @@ public class MySPV3 {
     public String getString(String key, String def) {
         return preferences.getString(key, def);
     }
-
 }

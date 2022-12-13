@@ -1,4 +1,6 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.logic;
+
+import com.example.gameandroidassignment1.activities.GameActivity;
 
 public class Tank {
     private GameActivity.Location location;

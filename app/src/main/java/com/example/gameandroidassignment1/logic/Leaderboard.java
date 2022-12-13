@@ -1,16 +1,11 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.logic;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class Leaderboard {
     private ArrayList<Result> leaderboard = new ArrayList<>();
 
-    public Leaderboard() {
-//        leaderboard.add(new Result().setScore(5));
-//        leaderboard.add(new Result().setScore(10));
-//        leaderboard.add(new Result().setScore(6));
-    }
+    public Leaderboard() {  }
 
     private void sortLeaderboard() {
         leaderboard.sort((result1, result2) -> result2.getScore() - result1.getScore());

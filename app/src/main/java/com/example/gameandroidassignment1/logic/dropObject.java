@@ -1,4 +1,6 @@
-package com.example.gameandroidassignment1;
+package com.example.gameandroidassignment1.logic;
+
+import com.example.gameandroidassignment1.logic.type;
 
 import java.util.Random;
 
