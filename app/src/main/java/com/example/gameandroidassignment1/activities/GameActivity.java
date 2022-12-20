@@ -50,7 +50,8 @@ public class GameActivity extends AppCompatActivity {
     ExplosionSound mExplosionSound;
     CoinSound mCoinSound;
 
-    int DELAY = 500;
+    int defaultDelay = 500;
+    int DELAY = defaultDelay;
     boolean isSensor;
 
     @Override
@@ -101,10 +102,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-//        mBackgroundSound = new BackgroundSound();
-//        mBackgroundSound.execute();
-//        stepDetector.start();
-
         if(isSensor) {
             game_BTN_right.setVisibility(View.INVISIBLE);
             game_BTN_left.setVisibility(View.INVISIBLE);
@@ -121,7 +118,6 @@ public class GameActivity extends AppCompatActivity {
             stepDetector.stop();
 
         stopTimer();
-//        finish();
     }
 
     private void findHearts() {
@@ -231,16 +227,16 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void findTanks() {
-        tanks.put(Location.LEFT, findViewById(R.id.game_IMG_tank0));
-        tanks.put(Location.LEFT_MIDDLE, findViewById(R.id.game_IMG_tank1));
-        tanks.put(Location.MIDDLE, findViewById(R.id.game_IMG_tank2));
-        tanks.put(Location.RIGHT_MIDDLE, findViewById(R.id.game_IMG_tank3));
-        tanks.put(Location.RIGHT, findViewById(R.id.game_IMG_tank4));
+        tanks.put(Location.LEFT, (ShapeableImageView) findViewById(R.id.game_IMG_tank0));
+        tanks.put(Location.LEFT_MIDDLE, (ShapeableImageView) findViewById(R.id.game_IMG_tank1));
+        tanks.put(Location.MIDDLE, (ShapeableImageView) findViewById(R.id.game_IMG_tank2));
+        tanks.put(Location.RIGHT_MIDDLE, (ShapeableImageView) findViewById(R.id.game_IMG_tank3));
+        tanks.put(Location.RIGHT, (ShapeableImageView) findViewById(R.id.game_IMG_tank4));
     }
 
     private void findButtons() {
-        this.game_BTN_left = findViewById(R.id.game_BTN_left);
-        this.game_BTN_right = findViewById(R.id.game_BTN_right);
+        this.game_BTN_left = (MaterialButton) findViewById(R.id.game_BTN_left);
+        this.game_BTN_right = (MaterialButton) findViewById(R.id.game_BTN_right);
     }
 
     private void initViews() {
@@ -261,25 +257,10 @@ public class GameActivity extends AppCompatActivity {
         }
     };
 
-    private StepDetector.CallBack_speedStep callBack_speedSteps = new StepDetector.CallBack_speedStep() {
-
-        @Override
-        public void increaseSpeed() {
-            if(DELAY > 150) {
-                DELAY -= 50;
-                stopTimer();
-                startTimer();
-            }
-        }
-
-        @Override
-        public void decreaseSpeed() {
-            if(DELAY < 1000) {
-                DELAY += 50;
-                stopTimer();
-                startTimer();
-            }
-        }
+    private StepDetector.CallBack_speedStep callBack_speedSteps = speed -> {
+        DELAY = speed;
+        stopTimer();
+        startTimer();
     };
 
 
@@ -296,6 +277,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+//        System.err.println(DELAY);
         dropObject drop;
         for(int i = 0; i < gameManager.getAmountActiveDrops(); i++) {
             drop = gameManager.getDropLocation(i);
@@ -340,7 +322,7 @@ public class GameActivity extends AppCompatActivity {
         game_LBL_score.setText("" + gameManager.getScore());
 
         for (int i = 0; i < gameManager.getLife(); i++) {
-            if(i < gameManager.getWrong())
+            if(i < gameManager.getStrikes())
                 hearts[i].setVisibility(View.INVISIBLE);
             else
                 hearts[i].setVisibility(View.VISIBLE);
@@ -348,7 +330,7 @@ public class GameActivity extends AppCompatActivity {
 
         if(gameManager.getScore()%10 == 0
                 && gameManager.getScore() != 0
-                && DELAY >= 200
+                && DELAY > 150
                 && !isSensor) {
             DELAY -= 50;
             stopTimer();
@@ -384,20 +366,6 @@ public class GameActivity extends AppCompatActivity {
             v.vibrate(500);
         }
     }
-
-//    public class BackgroundSound extends AsyncTask<Void, Void, Void> {
-//        MediaPlayer backgroundPlayer = MediaPlayer.create(GameActivity.this, R.raw.background);
-//
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//
-//            backgroundPlayer.setLooping(true); // Set looping
-//            backgroundPlayer.setVolume(1.0f, 1.0f);
-//            backgroundPlayer.start();
-//
-//            return null;
-//        }
-//    }
 
     public class ExplosionSound extends AsyncTask<Void, Void, Void> {
         MediaPlayer player = MediaPlayer.create(GameActivity.this, R.raw.explosion);

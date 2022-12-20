@@ -1,35 +1,22 @@
 package com.example.gameandroidassignment1.fragments;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.gameandroidassignment1.activities.LeaderboardActivity;
 import com.example.gameandroidassignment1.assets.CallBack_LocationProtocol;
 import com.example.gameandroidassignment1.logic.Leaderboard;
 import com.example.gameandroidassignment1.assets.MySPV3;
 import com.example.gameandroidassignment1.R;
 import com.example.gameandroidassignment1.logic.Result;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 public class Fragment_List extends Fragment {
     private static final String SP_KEY_LEADERBOARD = "SP_KEY_LEADERBOARD";
@@ -39,9 +26,6 @@ public class Fragment_List extends Fragment {
     private LinearLayout[] rows = new LinearLayout[10];
     private MaterialTextView[] scores = new MaterialTextView[10];
     private MaterialTextView[] dates = new MaterialTextView[10];
-
-//    private int lastScore;
-//    private Location location;
 
     private CallBack_LocationProtocol callBack_locationProtocol;
 
@@ -55,21 +39,6 @@ public class Fragment_List extends Fragment {
         View view = inflater.inflate(R.layout.fragment_leaderboard_list, container, false);
 
         findViews(view);
-
-//        if(lastScore != -1) {
-//            if(ContextCompat.checkSelfPermission(
-//                    Fragment_List.this.getContext(),
-//                    Manifest.permission.ACCESS_FINE_LOCATION) ==
-//                    PackageManager.PERMISSION_GRANTED)
-//                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-//            else {
-//
-//            }
-
-//            fragment_list.addResult(new Result().setScore(lastScore).setLocation(location));
-//        }
-
-//        updateLeaderboard();
 
         fillList();
 
@@ -170,18 +139,4 @@ public class Fragment_List extends Fragment {
             dates[i].setText(""+ leaderboard.getLeaderboard().get(i).getDate());
         }
     }
-
-//    public ArrayList<LatLng> getLeaderboardLocations() {
-//        ArrayList<LatLng> locations = new ArrayList<>();
-//
-//        for(Result result : leaderboard.getLeaderboard()) {
-//            locations.add(new LatLng(result.getLocation().getLatitude(), result.getLocation().getLongitude()));
-//        }
-//
-//        return locations;
-//    }
-
-//    public void setLastScore(int lastScore) {
-//        this.lastScore = lastScore;
-//    }
 }

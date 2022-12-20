@@ -4,8 +4,6 @@ import com.example.gameandroidassignment1.activities.GameActivity;
 
 import java.util.ArrayList;
 
-;
-
 public class GameManager {
     public final int COLUMNS = 5;
     public final int ROWS = 8;
@@ -19,10 +17,8 @@ public class GameManager {
     private Tank tank;
 
     private int score = 0;
-    private int wrong = 0;
+    private int strikes = 0;
     private int life;
-
-    private int coins = 0;
 
     public GameManager(int life, int pace) {
         this.pace = pace;
@@ -75,7 +71,7 @@ public class GameManager {
         if (getFrontDrop().getRow() == ROWS) {
             if(getFrontDrop().getType() == type.BOMB) {
                 if (GameActivity.Location.values()[getFrontDrop().getColumn()] == tank.getLocation()) {
-                    wrong++;
+                    strikes++;
                     check = 1;
                 } else
                     score++;
@@ -94,7 +90,7 @@ public class GameManager {
         return check;
     }
 
-    public boolean isGameOver() { return wrong == life; }
+    public boolean isGameOver() { return strikes == life; }
 
     public int getAmountActiveDrops() {
         return this.activeDrops.size();
@@ -104,8 +100,8 @@ public class GameManager {
         return score;
     }
 
-    public int getWrong() {
-        return wrong;
+    public int getStrikes() {
+        return strikes;
     }
 
     public int getLife() {

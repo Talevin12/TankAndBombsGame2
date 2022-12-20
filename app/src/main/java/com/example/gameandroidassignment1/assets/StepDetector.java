@@ -7,14 +7,17 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 public class StepDetector {
+    final int NORMAL = 400;
+    final int FAST = 200;
+    int currPace = NORMAL;
+
     public interface CallBack_movementStep {
         void oneStepRight();
         void oneStepLeft();
     }
 
     public interface CallBack_speedStep {
-        void increaseSpeed();
-        void decreaseSpeed();
+        void setSpeed(int speed);
     }
 
 
@@ -22,7 +25,6 @@ public class StepDetector {
     private Sensor sensor;
 
     long timeStampMovement = 0;
-    long timeStampSpeed = 0;
 
     private CallBack_movementStep callBack_movementStep;
     private CallBack_speedStep callBack_speedStep;
@@ -91,21 +93,21 @@ public class StepDetector {
         }
     }
 
-    private void calculateSpeedStep(float x) {
-        if (x > 1.0) {
-            if (System.currentTimeMillis() - timeStampMovement > 100) {
-                timeStampMovement = System.currentTimeMillis();
-                if (callBack_speedStep != null) {
-                    callBack_speedStep.increaseSpeed();
-                }
-            }
-        }
+    private void calculateSpeedStep(float z) {
+        if (System.currentTimeMillis() - timeStampMovement > 100) {
+            timeStampMovement = System.currentTimeMillis();
 
-        if (x < -1.0) {
-            if (System.currentTimeMillis() - timeStampMovement > 100) {
-                timeStampMovement = System.currentTimeMillis();
-                if (callBack_speedStep != null) {
-                    callBack_speedStep.decreaseSpeed();
+            if (callBack_speedStep != null) {
+                if (z < 6) {
+                    if (currPace != NORMAL) {
+                        currPace = NORMAL;
+                        callBack_speedStep.setSpeed(currPace);
+                    }
+                } else {
+                    if (currPace != FAST) {
+                        currPace = FAST;
+                        callBack_speedStep.setSpeed(currPace);
+                    }
                 }
             }
         }

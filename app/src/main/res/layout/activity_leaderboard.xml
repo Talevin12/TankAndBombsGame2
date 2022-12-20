@@ -15,7 +15,16 @@
         android:layout_height="0dp"
         android:layout_weight="2"
         android:padding="8dp"
-        android:background="#368A2D"/>
+        android:background="#2D8A88">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/leaderboardList_IMG_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            />
+
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/panel_LAY_map"
@@ -23,6 +32,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:padding="8dp"
-        android:background="#9A7811"/>
+        android:background="#119A5A"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -12,8 +12,8 @@ public class Leaderboard {
     }
 
     private void saveTop10() {
-        for(int i = 10; i < leaderboard.size(); i++)
-            leaderboard.remove(i);
+        while(leaderboard.size() != 10)
+            leaderboard.remove(leaderboard.size()-1);
     }
 
     public void addResult(Result result) {

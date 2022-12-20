@@ -24,16 +24,7 @@ public class MapsFragment extends Fragment {
     private ArrayList<LatLng> locations = new ArrayList<>();
     private GoogleMap googleMap;
 
-    private final OnMapReadyCallback callback = googleMap -> {
-
-        this.googleMap = googleMap;
-//        LatLng sydney = new LatLng(-34, 151);
-
-//        for(int i = 0; i < locations.size(); i++) {
-//            googleMap.addMarker(new MarkerOptions().position(locations.get(i)).title("#"+(i+1)));
-////                googleMap.moveCamera(CameraUpdateFactory.newLatLng());
-//        }
-    };
+    private final OnMapReadyCallback callback = googleMap -> this.googleMap = googleMap;
 
     @SuppressLint("MissingPermission")
     @Nullable
@@ -59,10 +50,6 @@ public class MapsFragment extends Fragment {
     public void setMarker(LatLng location) {
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions().position(location));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
     }
-
-//    public void setLocations(ArrayList<LatLng> locations) {
-//        this.locations = locations;
-//    }
 }

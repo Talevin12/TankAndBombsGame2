@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.gameandroidassignment1.R;
-import com.example.gameandroidassignment1.activities.GameActivity;
-import com.example.gameandroidassignment1.activities.LeaderboardActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class StartMenuActivity  extends AppCompatActivity {

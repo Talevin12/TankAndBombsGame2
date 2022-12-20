@@ -7,12 +7,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.gameandroidassignment1.R;
 import com.example.gameandroidassignment1.assets.CallBack_LocationProtocol;
 import com.example.gameandroidassignment1.assets.MySPV3;
@@ -51,6 +53,12 @@ public class LeaderboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
+        String backgroundImg ="https://static.vecteezy.com/system/resources/previews/001/849/553/original/modern-gold-background-free-vector.jpg";
+        Glide.with(this)
+                .load(backgroundImg)
+                .fitCenter()
+                .into((ImageView) findViewById(R.id.leaderboardList_IMG_background));
+
         MySPV3.init(this);
 
         Intent previousIntent = getIntent();
@@ -77,31 +85,18 @@ public class LeaderboardActivity extends AppCompatActivity {
                             setScore(lastScore).
                             setLatitude(location.getLatitude()).
                             setLongitude(location.getLongitude()));
-//                fragment_map.setMarker(new LatLng(location.getLatitude(), location.getLongitude()));
-//                addResult(new Result().setScore(lastScore).setLocation(location));
-//                Toast toast = Toast.makeText(this, "Altitude: " + location.getAltitude() + "\nLongitude: " + location.getLongitude(), Toast.LENGTH_LONG);
-//                toast.show();
                 });
             }
         }
-//        fragment_list.setLastScore(lastScore);
-//        while(location == null) {}
 
-//        fragment_list.addResult(new Result().setScore(lastScore).setLocation(location));
 
         getSupportFragmentManager().beginTransaction().add(R.id.panel_LAY_list, fragment_list).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.panel_LAY_map, fragment_map).commit();
-
-
-//        fragment_map.setLocations(fragment_list.getLeaderboardLocations());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-//        fragment_list.addResult(new Result().setScore(lastScore).setLocation(location));
-//        fragment_map.setLocations(fragment_list.getLeaderboardLocations());
     }
 
     @SuppressLint("MissingPermission")
@@ -117,10 +112,6 @@ public class LeaderboardActivity extends AppCompatActivity {
                                 setScore(lastScore).
                                 setLatitude(location.getLatitude()).
                                 setLongitude(location.getLongitude()));
-//                        fragment_map.setMarker(new LatLng(location.getLatitude(), location.getLongitude()));
-//                        addResult(new Result().setScore(lastScore).setLocation(location));
-//                        Toast toast = Toast.makeText(this, "Altitude: "+ location.getAltitude() +"\nLongitude: "+ location.getLongitude(), Toast.LENGTH_LONG);
-//                        toast.show();
                     });
                 } else {
                     //TODO

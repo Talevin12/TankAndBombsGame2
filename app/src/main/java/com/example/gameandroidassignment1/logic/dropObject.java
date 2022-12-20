@@ -1,7 +1,5 @@
 package com.example.gameandroidassignment1.logic;
 
-import com.example.gameandroidassignment1.logic.type;
-
 import java.util.Random;
 
 public class dropObject {
